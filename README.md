@@ -7,7 +7,7 @@
 * automatic mode relies on parameter names with special prefixes denoting components which produce parameter values and change events
 * in manual mode, the links are specified in the facet markup or via its API (the latter hardly makes sense).
 
-Mixed mode is also possible, when some links are specified explicitly and the rest is configured automatically.
+Semi-automatic mode is also possible, when some links are specified explicitly and the rest is configured automatically.
 
 When using `DataLoadCoordinator`, the `@LoadDataBeforeShow` annotation must be removed, otherwise it will lead to multiple reloads. We should implement an inspection in Studio for this later.
 
