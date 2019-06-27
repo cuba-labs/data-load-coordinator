@@ -83,7 +83,9 @@ Doesn't work in `Fragment`, but only in `Window`.
     <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory"/>
 ```
 
-### Manual configuration with parameter name omitted. Works if there is a single parameter in query or conditions
+### Manual configuration with parameter name omitted
+
+Works if there is a single parameter in query or conditions
    
 ```xml
 <facets>
@@ -95,7 +97,9 @@ Doesn't work in `Fragment`, but only in `Window`.
 </facets>
 ```
 
-### Semi-automatic configuration: affects only loaders not having manual configurations
+### Semi-automatic configuration
+
+Affects only loaders not having manual configurations.
    
 ```xml
 <data readOnly="true">
