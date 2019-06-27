@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://browseCaption"
+        focusComponent="ownersTable"
+        messagesPack="com.company.demo.web.screens.owner">
+    <data readOnly="true">
+        <collection id="ownersDc"
+                    class="com.company.demo.entity.Owner"
+                    view="owner-with-category-view">
+            <loader id="ownersDl">
+                <query>
+                    <![CDATA[select e from demo_Owner e]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>e.category = :category</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.name like :name</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="petsDc" class="com.company.demo.entity.Pet">
+            <loader id="petsDl">
+                <query><![CDATA[select e from demo_Pet e where e.owner = :owner]]></query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <facets>
+        <dataLoadCoordinator>
+            <loader ref="ownersDl" onScreenEvent="Init"/>
+            <loader ref="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
+            <loader ref="ownersDl" onComponentValueChanged="categoryFilterField" param="category"/>
+        </dataLoadCoordinator>
+    </facets>
+    <layout expand="split"
+            spacing="true">
+        <filter id="filter"
+                applyTo="ownersTable"
+                dataLoader="ownersDl">
+            <properties include=".*"/>
+        </filter>
+        <split id="split" orientation="horizontal" width="100%">
+            <groupTable id="ownersTable"
+                        width="100%"
+                        dataContainer="ownersDc">
+                <actions>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                    <column id="email"/>
+                    <column id="category"/>
+                </columns>
+                <rowsCount/>
+                <buttonsPanel id="buttonsPanel"
+                              alwaysVisible="true">
+                    <button id="createBtn" action="ownersTable.create"/>
+                    <button id="editBtn" action="ownersTable.edit"/>
+                    <button id="removeBtn" action="ownersTable.remove"/>
+                    <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory" width="150px"/>
+                    <textField id="nameFilterField" width="100px"/>
+                </buttonsPanel>
+            </groupTable>
+            <table height="100%" width="100%" dataContainer="petsDc">
+                <columns>
+                    <column id="name"/>
+                </columns>
+            </table>
+        </split>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

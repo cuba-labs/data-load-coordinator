@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://browseCaption"
+        focusComponent="petsTable"
+        messagesPack="com.company.demo.web.screens.pet">
+    <data readOnly="true">
+        <collection id="petsDc"
+                    class="com.company.demo.entity.Pet"
+                    view="pet-view">
+            <loader id="petsDl">
+                <query>
+                    <![CDATA[select e from demo_Pet e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="petsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="petsTable"
+                dataLoader="petsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="petsTable"
+                    width="100%"
+                    dataContainer="petsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="owner"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="petsTable.create"/>
+                <button id="editBtn" action="petsTable.edit"/>
+                <button id="removeBtn" action="petsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://editorCaption"
+        focusComponent="form"
+        messagesPack="com.company.demo.web.screens.owner">
+    <data>
+        <instance id="ownerDc"
+                  class="com.company.demo.entity.Owner"
+                  view="owner-with-category-view">
+            <loader/>
+        </instance>
+        <collection id="petsDc" class="com.company.demo.entity.Pet" view="_local">
+            <loader id="petsDl">
+                <query>select e from demo_Pet e where e.owner = :container$ownerDc</query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout expand="petsTable" spacing="true">
+        <form id="form" dataContainer="ownerDc">
+            <column width="250px">
+                <textField id="nameField" property="name"/>
+                <textField id="emailField" property="email"/>
+                <pickerField id="categoryField" property="category"/>
+            </column>
+        </form>
+        <table id="petsTable" dataContainer="petsDc" width="100%">
+            <columns>
+                <column id="name"/>
+            </columns>
+        </table>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

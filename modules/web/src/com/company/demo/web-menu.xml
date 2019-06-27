@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+    <menu id="application-demo" insertBefore="administration">
+        <item screen="demo_Owner.browse"/>
+        <item screen="demo_Owner.browse.auto"/>
+        <item screen="demo_Owner.browse.semiauto"/>
+        <item screen="demo_Pet.browse"/>
+        <item screen="demo_OwnerCategory.browse"/>
+        <item screen="demo_Vet.browse"/>
+        <item screen="demo_Visit.browse"/>
+    </menu>
+</menu-config>

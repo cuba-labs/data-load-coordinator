@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+
+    <view entity="demo_Pet" name="pet-view" extends="_local">
+        <property name="owner" view="_minimal"/>
+    </view>
+    <view entity="demo_Owner" name="owner-view" extends="_local">
+        <property name="category" view="_minimal"/>
+    </view>
+    <view name="owner-with-category-view" entity="demo_Owner" extends="_local">
+        <property name="category"/>
+    </view>
+    <view entity="demo_Visit" name="visit-view" extends="_local">
+        <property name="pet" view="_minimal"/>
+        <property name="vet" view="_minimal"/>
+    </view>
+</views>

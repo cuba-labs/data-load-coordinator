@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <persistence-unit name="data-load-coordinator" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.company.demo.entity.Pet</class>
+        <class>com.company.demo.entity.Owner</class>
+        <class>com.company.demo.entity.Vet</class>
+        <class>com.company.demo.entity.Visit</class>
+        <class>com.company.demo.entity.OwnerCategory</class>
+    </persistence-unit>
+</persistence>

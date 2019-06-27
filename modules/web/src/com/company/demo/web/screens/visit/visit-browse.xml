@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://browseCaption"
+        focusComponent="visitsTable"
+        messagesPack="com.company.demo.web.screens.visit">
+    <data readOnly="true">
+        <collection id="petsDc"
+                    class="com.company.demo.entity.Pet"
+                    view="pet-view">
+            <loader id="petsDl">
+                <query>
+                    <![CDATA[select e from demo_Pet e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="vetsDc"
+                    class="com.company.demo.entity.Vet"
+                    view="_local">
+            <loader id="vetsDl">
+                <query>
+                    <![CDATA[select e from demo_Vet e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="visitsDc"
+                    class="com.company.demo.entity.Visit"
+                    view="visit-view">
+            <loader id="visitsDl">
+                <query>
+                    <![CDATA[select e from demo_Visit e]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>e.pet = :container$petsDc</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.vet = :container$vetsDc</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout expand="mainSplit"
+            spacing="true">
+        <split id="mainSplit" orientation="vertical" height="100%" width="100%">
+            <split id="topSplit" orientation="horizontal" height="100%" width="100%">
+                <table height="100%" width="100%" dataContainer="petsDc">
+                    <columns>
+                        <column id="name"/>
+                    </columns>
+                </table>
+                <table height="100%" width="100%" dataContainer="vetsDc">
+                    <columns>
+                        <column id="name"/>
+                    </columns>
+                </table>
+            </split>
+            <groupTable id="visitsTable"
+                            width="100%" height="100%"
+                            dataContainer="visitsDc">
+                <actions>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column id="pet"/>
+                    <column id="vet"/>
+                    <column id="date"/>
+                </columns>
+                <rowsCount/>
+                <buttonsPanel id="buttonsPanel"
+                              alwaysVisible="true">
+                    <button id="createBtn" action="visitsTable.create"/>
+                    <button id="editBtn" action="visitsTable.edit"/>
+                    <button id="removeBtn" action="visitsTable.remove"/>
+                </buttonsPanel>
+            </groupTable>
+        </split>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>
