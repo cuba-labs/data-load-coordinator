@@ -11,6 +11,8 @@ Semi-automatic mode is also possible, when some links are specified explicitly a
 
 When using `DataLoadCoordinator`, the `@LoadDataBeforeShow` annotation must be removed, otherwise it will lead to multiple reloads. We should implement an inspection in Studio for this later.
 
+Doesn't work in `Fragment`, but only in `Window`.
+
 ## Use Cases
 
 ### Automatic configuration
