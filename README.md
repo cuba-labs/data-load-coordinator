@@ -124,9 +124,9 @@ When using `DataLoadCoordinator`, the `@LoadDataBeforeShow` annotation must be r
     <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory"/>
 ```
     
-### Mixed auto-configuration by `dataLoadCoordinator` and usage of `@Subscribe` to handle case-insensitive `like` parameter
+### Mixed auto-configuration and reloading in controller
 
-Needed for pre-processing parameter values.
+Needed for pre-processing parameter values, for example for handling case-insensitive `like` parameters.
    
 ```xml
 <data readOnly="true">
