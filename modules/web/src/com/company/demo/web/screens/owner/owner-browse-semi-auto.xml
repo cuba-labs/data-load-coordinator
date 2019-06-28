@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
-        caption="msg://browseCaption"
+        caption="Owners (semi-auto)"
         focusComponent="ownersTable"
         messagesPack="com.company.demo.web.screens.owner">
     <data readOnly="true">
@@ -14,7 +14,7 @@
                     <condition>
                         <and>
                             <c:jpql>
-                                <c:where>e.category = :category</c:where>
+                                <c:where>e.category = :component_categoryFilterField</c:where>
                             </c:jpql>
                             <c:jpql>
                                 <c:where>e.name like :name</c:where>
@@ -34,7 +34,7 @@
                 width="800"/>
     <facets>
         <dataLoadCoordinator auto="true">
-            <loader ref="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
+            <refresh loader="petsDl" param="owner" onContainerItemChanged="ownersDc"/>
         </dataLoadCoordinator>
     </facets>
     <layout expand="split"

@@ -11,7 +11,7 @@
         </instance>
         <collection id="petsDc" class="com.company.demo.entity.Pet" view="_local">
             <loader id="petsDl">
-                <query>select e from demo_Pet e where e.owner = :container$ownerDc</query>
+                <query>select e from demo_Pet e where e.owner = :container_ownerDc</query>
             </loader>
         </collection>
     </data>

@@ -42,8 +42,18 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
     @Override
     public void loadFromXml(DataLoadCoordinator facet, Element element, ComponentLoader.ComponentContext context) {
         facet.setOwner(context.getFrame());
-        for (Element loaderEl : element.elements("loader")) {
-            String loaderId = loaderEl.attributeValue("ref");
+
+        String containerPrefix = element.attributeValue("containerPrefix");
+        if (containerPrefix != null) {
+            facet.setContainerPrefix(containerPrefix);
+        }
+        String componentPrefix = element.attributeValue("componentPrefix");
+        if (componentPrefix != null) {
+            facet.setComponentPrefix(componentPrefix);
+        }
+
+        for (Element loaderEl : element.elements("refresh")) {
+            String loaderId = loaderEl.attributeValue("loader");
             if (loaderId == null) {
                 throw new GuiDevelopmentException("'dataLoadCoordinator.loader' element has no 'ref' attribute", context);
             }
@@ -81,8 +91,12 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
             String onComponentValueChanged = loaderEl.attributeValue("onComponentValueChanged");
             if (onComponentValueChanged != null) {
                 String param = loaderEl.attributeValue("param");
-                context.addInjectTask(new OnComponentValueChangedLoadTriggerInitTask(facet, loaderId, onComponentValueChanged, param));
-                continue;
+
+                String likeClauseAttr = loaderEl.attributeValue("likeClause");
+                LikeClause likeClause = likeClauseAttr == null ? LikeClause.NONE : LikeClause.valueOf(likeClauseAttr);
+
+                context.addInjectTask(new OnComponentValueChangedLoadTriggerInitTask(
+                        facet, loaderId, onComponentValueChanged, param, likeClause));
             }
         }
 
@@ -140,13 +154,15 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         private final String loaderId;
         private final String componentId;
         private final String param;
+        private LikeClause likeClause;
 
         public OnComponentValueChangedLoadTriggerInitTask(
-                DataLoadCoordinator facet, String loaderId, String componentId, @Nullable String param) {
+                DataLoadCoordinator facet, String loaderId, String componentId, @Nullable String param, LikeClause likeClause) {
             this.facet = facet;
             this.loaderId = loaderId;
             this.componentId = componentId;
             this.param = param;
+            this.likeClause = likeClause;
         }
 
         @Override
@@ -154,7 +170,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
             DataLoader loader = context.getScreenData().getLoader(loaderId);
 
             com.haulmont.cuba.gui.components.Component component = context.getFrame().getComponentNN(componentId);
-            facet.addOnComponentValueChangedLoadTrigger(loader, component, param);
+            facet.addOnComponentValueChangedLoadTrigger(loader, component, param, likeClause);
         }
     }
 

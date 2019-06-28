@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
-        caption="msg://browseCaption"
+        caption="Owners (auto)"
         focusComponent="ownersTable"
         messagesPack="com.company.demo.web.screens.owner">
     <data readOnly="true">
@@ -14,10 +14,10 @@
                     <condition>
                         <and>
                             <c:jpql>
-                                <c:where>e.category = :component$categoryFilterField</c:where>
+                                <c:where>e.category = :component_categoryFilterField</c:where>
                             </c:jpql>
                             <c:jpql>
-                                <c:where>e.name like :name</c:where>
+                                <c:where>e.name like :component_nameFilterField</c:where>
                             </c:jpql>
                         </and>
                     </condition>
@@ -26,7 +26,7 @@
         </collection>
         <collection id="petsDc" class="com.company.demo.entity.Pet">
             <loader id="petsDl">
-                <query><![CDATA[select e from demo_Pet e where e.owner = :container$ownersDc]]></query>
+                <query><![CDATA[select e from demo_Pet e where e.owner = :container_ownersDc]]></query>
             </loader>
         </collection>
     </data>

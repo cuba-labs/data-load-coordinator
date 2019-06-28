@@ -14,17 +14,17 @@ import javax.inject.Inject;
 //@LoadDataBeforeShow
 public class OwnerBrowse extends StandardLookup<Owner> {
 
-    @Inject
-    private CollectionLoader<Owner> ownersDl;
-
-    @Subscribe("nameFilterField")
-    private void onNameFilterFieldValueChange(HasValue.ValueChangeEvent<String> event) {
-        String value = event.getValue();
-        if (!Strings.isNullOrEmpty(value)) {
-            ownersDl.setParameter("name", "(?i)%" + value + "%");
-        } else {
-            ownersDl.removeParameter("name");
-        }
-        ownersDl.load();
-    }
+//    @Inject
+//    private CollectionLoader<Owner> ownersDl;
+//
+//    @Subscribe("nameFilterField")
+//    private void onNameFilterFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+//        String value = event.getValue();
+//        if (!Strings.isNullOrEmpty(value)) {
+//            ownersDl.setParameter("name", "(?i)%" + value + "%");
+//        } else {
+//            ownersDl.removeParameter("name");
+//        }
+//        ownersDl.load();
+//    }
 }

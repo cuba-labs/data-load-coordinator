@@ -32,10 +32,10 @@
                     <condition>
                         <and>
                             <c:jpql>
-                                <c:where>e.pet = :container$petsDc</c:where>
+                                <c:where>e.pet = :container_petsDc</c:where>
                             </c:jpql>
                             <c:jpql>
-                                <c:where>e.vet = :container$vetsDc</c:where>
+                                <c:where>e.vet = :container_vetsDc</c:where>
                             </c:jpql>
                         </and>
                     </condition>

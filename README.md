@@ -30,7 +30,7 @@ Doesn't work in `Fragment`, but only in `Window`.
                 <condition>
                     <c:jpql>
                         <!-- triggers on 'categoryFilterField' value change -->
-                        <c:where>e.category = :component$categoryFilterField</c:where> 
+                        <c:where>e.category = :component_categoryFilterField</c:where> 
                     </c:jpql>
                 </condition>
             </query>
@@ -39,7 +39,7 @@ Doesn't work in `Fragment`, but only in `Window`.
     <collection id="petsDc" class="com.company.demo.entity.Pet">
         <loader id="petsDl">
             <!-- triggers on 'ownersDc' item change -->
-            <query><![CDATA[select e from demo_Pet e where e.owner = :container$ownersDc]]></query> 
+            <query><![CDATA[select e from demo_Pet e where e.owner = :container_ownersDc]]></query> 
         </loader>
     </collection>
 </data>
@@ -59,9 +59,14 @@ Doesn't work in `Fragment`, but only in `Window`.
             <query>
                 <![CDATA[select e from demo_Owner e]]>
                 <condition>
-                    <c:jpql>
-                        <c:where>e.category = :category</c:where>
-                    </c:jpql>
+                    <and>
+                        <c:jpql>
+                            <c:where>e.category = :category</c:where>
+                        </c:jpql>
+                        <c:jpql>
+                            <c:where>e.name like :name</c:where>
+                        </c:jpql>                    
+                    </and>
                 </condition>
             </query>
         </loader>
@@ -74,13 +79,17 @@ Doesn't work in `Fragment`, but only in `Window`.
 </data>
 <facets>
     <dataLoadCoordinator>
-        <loader ref="ownersDl" onScreenEvent="Init"/>
-        <loader ref="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
-        <loader ref="ownersDl" onComponentValueChanged="categoryFilterField" param="category"/>
+        <refresh loader="ownersDl" onScreenEvent="Init"/>
+        <refresh loader="petsDl" param="owner" onContainerItemChanged="ownersDc"/>
+        <refresh loader="ownersDl" param="category" onComponentValueChanged="categoryFilterField"/>
+
+        <refresh loader="ownersDl" param="name" onComponentValueChanged="nameFilterField" 
+            likeClause="CASE_INSENSITIVE"/> <!-- wraps value in '(?i)%value%' --> 
     </dataLoadCoordinator>
 </facets>
 <layout>
     <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory"/>
+    <textField id="nameFilterField"/>    
 ```
 
 ### Manual configuration with parameter name omitted
@@ -90,9 +99,9 @@ Works if there is a single parameter in query or conditions
 ```xml
 <facets>
     <dataLoadCoordinator>
-        <loader ref="ownersDl" onScreenEvent="Init"/>
-        <loader ref="petsDl" onContainerItemChanged="ownersDc"/>
-        <loader ref="ownersDl" onComponentValueChanged="categoryFilterField"/>
+        <refresh loader="ownersDl" onScreenEvent="Init"/>
+        <refresh loader="petsDl" onContainerItemChanged="ownersDc"/>
+        <refresh loader="ownersDl" onComponentValueChanged="categoryFilterField"/>
     </dataLoadCoordinator>
 </facets>
 ```
@@ -109,7 +118,7 @@ Affects only loaders not having manual configurations.
                 <![CDATA[select e from demo_Owner e]]>
                 <condition>
                     <c:jpql>
-                        <c:where>e.category = :component$categoryFilterField</c:where>
+                        <c:where>e.category = :component_categoryFilterField</c:where>
                     </c:jpql>
                 </condition>
             </query>
@@ -123,16 +132,14 @@ Affects only loaders not having manual configurations.
 </data>
 <facets>
     <dataLoadCoordinator auto="true">
-        <loader ref="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
+        <refresh loader="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
     </dataLoadCoordinator>
 </facets>
 <layout>
     <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory"/>
 ```
     
-### Mixed auto-configuration and reloading in controller
-
-Needed for pre-processing parameter values, for example for handling case-insensitive `like` parameters.
+### Auto-configuration with handling case-insensitive `like` parameters
    
 ```xml
 <data readOnly="true">
@@ -144,11 +151,11 @@ Needed for pre-processing parameter values, for example for handling case-insens
                     <and>
                         <c:jpql>
                             <!-- triggers on 'categoryFilterField' value change -->
-                            <c:where>e.category = :component$categoryFilterField</c:where>
+                            <c:where>e.category = :component_categoryFilterField</c:where>
                         </c:jpql>
                         <c:jpql>
-                            <!-- this parameters is set in controller -->
-                            <c:where>e.name like :name</c:where>
+                            <!-- triggers on 'nameFilterField' value change, automatically wraps value in '(?i)%value%' -->
+                            <c:where>e.name like :component_nameFilterField</c:where>
                         </c:jpql>
                     </and>
                 </condition>
@@ -158,7 +165,7 @@ Needed for pre-processing parameter values, for example for handling case-insens
     <collection id="petsDc" class="com.company.demo.entity.Pet">
         <loader id="petsDl">
             <!-- triggers on 'ownersDc' item change -->
-            <query><![CDATA[select e from demo_Pet e where e.owner = :container$ownersDc]]></query> 
+            <query><![CDATA[select e from demo_Pet e where e.owner = :container_ownersDc]]></query> 
         </loader>
     </collection>
 </data>
@@ -167,20 +174,5 @@ Needed for pre-processing parameter values, for example for handling case-insens
 </facets>
 <layout>
     <pickerField id="categoryFilterField" metaClass="demo_OwnerCategory"/>
-```
-
-```java
-@Inject
-private CollectionLoader<Owner> ownersDl;
-
-@Subscribe("nameFilterField")
-private void onNameFilterFieldValueChange(HasValue.ValueChangeEvent<String> event) {
-    String value = event.getValue();
-    if (!Strings.isNullOrEmpty(value)) {
-        ownersDl.setParameter("name", "(?i)%" + value + "%");
-    } else {
-        ownersDl.removeParameter("name");
-    }
-    ownersDl.load();
-}    
+    <textField id="nameFilterField"/>    
 ```

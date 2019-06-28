@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
-        caption="msg://browseCaption"
+        caption="Owners"
         focusComponent="ownersTable"
         messagesPack="com.company.demo.web.screens.owner">
     <data readOnly="true">
@@ -34,9 +34,10 @@
                 width="800"/>
     <facets>
         <dataLoadCoordinator>
-            <loader ref="ownersDl" onScreenEvent="Init"/>
-            <loader ref="petsDl" onContainerItemChanged="ownersDc" param="owner"/>
-            <loader ref="ownersDl" onComponentValueChanged="categoryFilterField" param="category"/>
+            <refresh loader="ownersDl" onScreenEvent="Init"/>
+            <refresh loader="petsDl" param="owner" onContainerItemChanged="ownersDc"/>
+            <refresh loader="ownersDl" param="category" onComponentValueChanged="categoryFilterField"/>
+            <refresh loader="ownersDl" param="name" onComponentValueChanged="nameFilterField" likeClause="CASE_INSENSITIVE"/>
         </dataLoadCoordinator>
     </facets>
     <layout expand="split"
