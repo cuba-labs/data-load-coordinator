@@ -12,6 +12,7 @@ import com.haulmont.cuba.gui.model.InstanceContainer;
 import com.haulmont.cuba.gui.model.ScreenData;
 import com.haulmont.cuba.gui.screen.FrameOwner;
 import com.haulmont.cuba.gui.screen.Screen;
+import com.haulmont.cuba.gui.screen.ScreenFragment;
 import com.haulmont.cuba.gui.screen.UiControllerUtils;
 import com.haulmont.cuba.gui.sys.UiControllerReflectionInspector;
 import com.haulmont.cuba.web.gui.WebAbstractFacet;
@@ -56,8 +57,8 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
     }
 
     @Override
-    public void addOnScreenEventLoadTrigger(DataLoader loader, Class eventClass) {
-        OnScreenEventLoadTrigger loadTrigger = new OnScreenEventLoadTrigger(getScreen(), reflectionInspector, loader, eventClass);
+    public void addOnFrameOwnerEventLoadTrigger(DataLoader loader, Class eventClass) {
+        OnFrameOwnerEventLoadTrigger loadTrigger = new OnFrameOwnerEventLoadTrigger(getFrameOwner(), reflectionInspector, loader, eventClass);
         loadTriggers.add(loadTrigger);
     }
 
@@ -79,10 +80,10 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
 
     @Override
     public void configureAutomatically() {
-        Screen screen = getScreen();
-        ScreenData screenData = UiControllerUtils.getScreenData(screen);
+        FrameOwner frameOwner = getFrameOwner();
+        ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
 
-        getUnconfiguredLoaders(screenData).forEach(loader -> configureAutomatically(loader, screen));
+        getUnconfiguredLoaders(screenData).forEach(loader -> configureAutomatically(loader, frameOwner));
     }
 
     private Stream<DataLoader> getUnconfiguredLoaders(ScreenData screenData) {
@@ -93,7 +94,7 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
                         .map(LoadTrigger::getLoader).noneMatch(configuredLoader -> configuredLoader == loader));
     }
 
-    private void configureAutomatically(DataLoader loader, Screen screen) {
+    private void configureAutomatically(DataLoader loader, FrameOwner frameOwner) {
         List<String> queryParameters = getQueryParameters(loader);
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
@@ -101,7 +102,7 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
         // add triggers on container/component events
         for (String parameter : allParameters) {
             if (parameter.startsWith(containerPrefix)) {
-                InstanceContainer container = UiControllerUtils.getScreenData(screen).getContainer(
+                InstanceContainer container = UiControllerUtils.getScreenData(frameOwner).getContainer(
                         parameter.substring(containerPrefix.length()));
                 OnContainerItemChangedLoadTrigger loadTrigger = new OnContainerItemChangedLoadTrigger(
                         loader, container, parameter);
@@ -109,16 +110,19 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
 
             } else if (parameter.startsWith(componentPrefix)) {
                 String componentId = parameter.substring(componentPrefix.length());
-                Component component = screen.getWindow().getComponentNN(componentId);
+                Component component = frameOwner instanceof Screen ?
+                        ((Screen) frameOwner).getWindow().getComponentNN(componentId) :
+                        ((ScreenFragment) frameOwner).getFragment().getComponentNN(componentId);
                 OnComponentValueChangedLoadTrigger loadTrigger = new OnComponentValueChangedLoadTrigger(
                         loader, component, parameter, findLikeClause(loader, parameter));
                 loadTriggers.add(loadTrigger);
             }
         }
-        // if the loader has no parameters in query, add trigger on BeforeShowEvent
+        // if the loader has no parameters in query, add trigger on BeforeShowEvent/AttachEvent
         if (queryParameters.isEmpty()) {
-            OnScreenEventLoadTrigger loadTrigger = new OnScreenEventLoadTrigger(
-                    screen, reflectionInspector, loader, Screen.BeforeShowEvent.class);
+            Class eventClass = frameOwner instanceof Screen ? Screen.BeforeShowEvent.class : ScreenFragment.AttachEvent.class;
+            OnFrameOwnerEventLoadTrigger loadTrigger = new OnFrameOwnerEventLoadTrigger(
+                    frameOwner, reflectionInspector, loader, eventClass);
             loadTriggers.add(loadTrigger);
         }
     }
@@ -201,15 +205,11 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
         return false;
     }
 
-    private Screen getScreen() {
+    private FrameOwner getFrameOwner() {
         Frame frame = getOwner();
         if (frame == null) {
-            throw new IllegalStateException("Owner window is null");
+            throw new IllegalStateException("Owner frame is null");
         }
-        FrameOwner frameOwner = frame.getFrameOwner();
-        if (!(frameOwner instanceof Screen)) {
-            throw new UnsupportedOperationException("WebDataLoadCoordinator can work only in Screen");
-        }
-        return (Screen) frameOwner;
+        return frame.getFrameOwner();
     }
 }

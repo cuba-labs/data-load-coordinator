@@ -1,10 +1,14 @@
 package com.company.demo.web.dataloadcoordinator;
 
+import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.GuiDevelopmentException;
 import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.model.DataLoader;
 import com.haulmont.cuba.gui.model.InstanceContainer;
+import com.haulmont.cuba.gui.model.ScreenData;
 import com.haulmont.cuba.gui.screen.Screen;
+import com.haulmont.cuba.gui.screen.ScreenFragment;
+import com.haulmont.cuba.gui.screen.UiControllerUtils;
 import com.haulmont.cuba.gui.sys.UiControllerReflectionInspector;
 import com.haulmont.cuba.gui.xml.FacetProvider;
 import com.haulmont.cuba.gui.xml.layout.ComponentLoader;
@@ -75,9 +79,29 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
                         eventClass = Screen.AfterShowEvent.class;
                         break;
                     default:
-                        throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator.loader.onScreenEvent' value: " + onScreenEvent, context);
+                        throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onScreenEvent' value: " + onScreenEvent, context);
                 }
-                context.addInjectTask(new OnScreenEventLoadTriggerInitTask(facet, loaderId, eventClass));
+                context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
+                continue;
+            }
+
+            String onFragmentEvent = loaderEl.attributeValue("onFragmentEvent");
+            if (onFragmentEvent != null) {
+                Class eventClass;
+                switch (onFragmentEvent) {
+                    case "Init":
+                        eventClass = ScreenFragment.InitEvent.class;
+                        break;
+                    case "AfterInit":
+                        eventClass = ScreenFragment.AfterInitEvent.class;
+                        break;
+                    case "Attach":
+                        eventClass = ScreenFragment.AttachEvent.class;
+                        break;
+                    default:
+                        throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onFragmentEvent' value: " + onFragmentEvent, context);
+                }
+                context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
                 continue;
             }
 
@@ -101,17 +125,17 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         if (Boolean.parseBoolean(element.attributeValue("auto"))) {
-            context.addPostInitTask(new AutoConfigurationInitTask(facet));
+            context.addInjectTask(new AutoConfigurationInitTask(facet));
         }
     }
 
-    public static class OnScreenEventLoadTriggerInitTask implements ComponentLoader.InjectTask {
+    public static class OnFrameOwnerEventLoadTriggerInitTask implements ComponentLoader.InjectTask {
 
         private final DataLoadCoordinator facet;
         private final String loaderId;
         private final Class eventClass;
 
-        public OnScreenEventLoadTriggerInitTask(DataLoadCoordinator facet, String loaderId, Class eventClass) {
+        public OnFrameOwnerEventLoadTriggerInitTask(DataLoadCoordinator facet, String loaderId, Class eventClass) {
             this.facet = facet;
             this.loaderId = loaderId;
             this.eventClass = eventClass;
@@ -119,8 +143,10 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
         @Override
         public void execute(ComponentLoader.ComponentContext context, Frame window) {
-            DataLoader loader = context.getScreenData().getLoader(loaderId);
-            facet.addOnScreenEventLoadTrigger(loader, eventClass);
+            Preconditions.checkNotNull(facet.getOwner());
+            ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
+            DataLoader loader = screenData.getLoader(loaderId);
+            facet.addOnFrameOwnerEventLoadTrigger(loader, eventClass);
         }
     }
 
@@ -142,8 +168,10 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
         @Override
         public void execute(ComponentLoader.ComponentContext context, Frame window) {
-            DataLoader loader = context.getScreenData().getLoader(loaderId);
-            InstanceContainer container = context.getScreenData().getContainer(containerId);
+            Preconditions.checkNotNull(facet.getOwner());
+            ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
+            DataLoader loader = screenData.getLoader(loaderId);
+            InstanceContainer container = screenData.getContainer(containerId);
             facet.addOnContainerItemChangedLoadTrigger(loader, container, param);
         }
     }
@@ -167,14 +195,15 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
         @Override
         public void execute(ComponentLoader.ComponentContext context, Frame window) {
-            DataLoader loader = context.getScreenData().getLoader(loaderId);
-
-            com.haulmont.cuba.gui.components.Component component = context.getFrame().getComponentNN(componentId);
+            Preconditions.checkNotNull(facet.getOwner());
+            ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
+            DataLoader loader = screenData.getLoader(loaderId);
+            com.haulmont.cuba.gui.components.Component component = facet.getOwner().getComponentNN(componentId);
             facet.addOnComponentValueChangedLoadTrigger(loader, component, param, likeClause);
         }
     }
 
-    public static class AutoConfigurationInitTask implements ComponentLoader.PostInitTask {
+    public static class AutoConfigurationInitTask implements ComponentLoader.InjectTask {
 
         private final DataLoadCoordinator facet;
 

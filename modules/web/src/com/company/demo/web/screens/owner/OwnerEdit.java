@@ -8,4 +8,6 @@ import com.company.demo.entity.Owner;
 @EditedEntityContainer("ownerDc")
 //@LoadDataBeforeShow
 public class OwnerEdit extends StandardEditor<Owner> {
+
+
 }

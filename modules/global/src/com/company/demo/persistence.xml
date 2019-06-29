@@ -7,5 +7,8 @@
         <class>com.company.demo.entity.Vet</class>
         <class>com.company.demo.entity.Visit</class>
         <class>com.company.demo.entity.OwnerCategory</class>
+        <class>com.company.demo.entity.Address</class>
+        <class>com.company.demo.entity.Country</class>
+        <class>com.company.demo.entity.City</class>
     </persistence-unit>
 </persistence>

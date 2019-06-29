@@ -8,6 +8,7 @@
                   class="com.company.demo.entity.Owner"
                   view="owner-with-category-view">
             <loader/>
+            <instance id="addressDc" property="address"/>
         </instance>
         <collection id="petsDc" class="com.company.demo.entity.Pet" view="_local">
             <loader id="petsDl">
@@ -28,6 +29,9 @@
                 <pickerField id="categoryField" property="category"/>
             </column>
         </form>
+        <groupBox caption="Address">
+            <fragment id="addressFragment" screen="demo_AddressFragment"/>
+        </groupBox>
         <table id="petsTable" dataContainer="petsDc" width="100%">
             <columns>
                 <column id="name"/>

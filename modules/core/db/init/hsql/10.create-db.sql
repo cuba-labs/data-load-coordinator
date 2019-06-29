@@ -42,6 +42,12 @@ create table DEMO_OWNER (
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
     --
+    ADDRESS_COUNTRY_ID varchar(36),
+    ADDRESS_CITY_ID varchar(36),
+    ADDRESS_POSTCODE varchar(20),
+    ADDRESS_LINE1 varchar(255),
+    ADDRESS_LINE2 varchar(255),
+    --
     NAME varchar(255),
     CATEGORY_ID varchar(36),
     EMAIL varchar(255),
@@ -83,3 +89,37 @@ create table DEMO_OWNER_CATEGORY (
     primary key (ID)
 )^
 -- end DEMO_OWNER_CATEGORY
+-- begin DEMO_COUNTRY
+create table DEMO_COUNTRY (
+    ID varchar(36) not null,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255),
+    CODE varchar(2),
+    --
+    primary key (ID)
+)^
+-- end DEMO_COUNTRY
+-- begin DEMO_CITY
+create table DEMO_CITY (
+    ID varchar(36) not null,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255),
+    COUNTRY_ID varchar(36),
+    --
+    primary key (ID)
+)^
+-- end DEMO_CITY

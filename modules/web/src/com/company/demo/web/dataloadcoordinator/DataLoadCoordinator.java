@@ -17,7 +17,7 @@ public interface DataLoadCoordinator extends Facet {
 
     void setComponentPrefix(String value);
 
-    void addOnScreenEventLoadTrigger(DataLoader loaderId, Class eventClass);
+    void addOnFrameOwnerEventLoadTrigger(DataLoader loaderId, Class eventClass);
 
     void addOnContainerItemChangedLoadTrigger(DataLoader loader, InstanceContainer container, @Nullable String param);
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://schemas.haulmont.com/cuba/screen/fragment.xsd">
+    <data>
+        <instance id="addressDc"
+                  class="com.company.demo.entity.Address"
+                  view="_local" provided="true">
+        </instance>
+        <collection id="countriesDc" class="com.company.demo.entity.Country" view="_minimal">
+            <loader id="countriesDl">
+                <query><![CDATA[select e from demo_Country e ]]></query>
+            </loader>
+        </collection>
+        <collection id="citiesDc" class="com.company.demo.entity.City" view="_minimal">
+            <loader id="citiesDl">
+                <query><![CDATA[select e from demo_City e where e.country = :container_countriesDc]]></query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true">
+<!--            <refresh loader="countriesDl" onFragmentEvent="Attach"/>-->
+<!--            <refresh loader="citiesDl" param="country" onContainerItemChanged="countriesDc"/>-->
+        </dataLoadCoordinator>
+    </facets>
+    <layout>
+        <form dataContainer="addressDc">
+            <textField id="postcodeField" property="postcode"/>
+            <lookupField id="countryField" property="country" optionsContainer="countriesDc"/>
+            <lookupField id="cityField" property="city" optionsContainer="citiesDc"/>
+            <textField id="line1Field" property="line1"/>
+            <textField id="line2Field" property="line2"/>
+        </form>
+    </layout>
+</fragment>
+
