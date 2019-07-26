@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://caption"
+        messagesPack="com.company.demo.web.screens.timer">
+    <facets>
+        <timer id="myTimer" delay="2000" autostart="true"/>
+    </facets>
+    <layout margin="true">
+        <label value="See notification in 2 sec after opening the screen"/>
+    </layout>
+</window>

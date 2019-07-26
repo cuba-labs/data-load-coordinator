@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
     <menu id="application-demo" insertBefore="administration">
-        <item screen="demo_Owner.browse"/>
+        <item screen="demo_TimerDemoScreen"/>
         <item screen="demo_Owner.browse.auto"/>
+        <item screen="demo_Owner.browse"/>
         <item screen="demo_Owner.browse.semiauto"/>
-        <item screen="demo_OwnerCategory.browse"/>
-        <item screen="demo_Pet.browse"/>
-        <item screen="demo_Vet.browse"/>
-        <item screen="demo_Visit.browse"/>
-        <item screen="demo_City.browse"/>
-        <item screen="demo_Country.browse"/>
+        <menu id="Reference Data">
+            <item screen="demo_OwnerCategory.browse"/>
+            <item screen="demo_Pet.browse"/>
+            <item screen="demo_Vet.browse"/>
+            <item screen="demo_Visit.browse"/>
+            <item screen="demo_Country.browse"/>
+            <item screen="demo_City.browse"/>
+        </menu>
     </menu>
 </menu-config>
