@@ -1,7 +1,8 @@
 
 buildscript {
-    ext.cubaVersion = '7.1-SNAPSHOT'
+    ext.cubaVersion = '7.1.0.BETA1'
     repositories {
+        mavenLocal()
         maven {
             url 'https://repo.cuba-platform.com/content/groups/work'
             credentials {
@@ -49,6 +50,7 @@ configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'cuba')
 
     dependencies {
+        testCompile('org.jmockit:jmockit:1.39')
         testCompile('junit:junit:4.12')
     }
 
