@@ -17,10 +17,7 @@
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true">
-<!--            <refresh loader="countriesDl" onFragmentEvent="Attach"/>-->
-<!--            <refresh loader="citiesDl" param="country" onContainerItemChanged="countriesDc"/>-->
-        </dataLoadCoordinator>
+        <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
         <form dataContainer="addressDc">
