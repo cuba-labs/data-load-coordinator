@@ -4,14 +4,15 @@ buildscript {
     repositories {
         mavenLocal()
         maven {
-            url 'https://repo.cuba-platform.com/content/groups/work'
-            credentials {
-                username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'cuba')
-                password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
-            }
+            url 'https://dl.bintray.com/cuba-platform/main'
         }
-        
-    }
+
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'http://maven.vaadin.com/vaadin-addons'
+        }
+}
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
     }
@@ -40,6 +41,7 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
+    appComponent('com.haulmont.addon.restapi:restapi-global:7.1.0.BETA1')
 }
 
 def hsql = 'org.hsqldb:hsqldb:2.4.1'
